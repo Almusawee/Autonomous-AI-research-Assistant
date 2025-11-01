@@ -1295,7 +1295,7 @@ class ExploreKnowledgeSpace:
                 emb_b = self.sim._text_mean_embedding(concept_b)
                 
                 distance = 1.0 - F.cosine_similarity(
-                    emb_a.unsqueeze(0), 
+                    emb_a.unsqueeze(0),
                     emb_b.unsqueeze(0)
                 ).item()
                 
@@ -1401,135 +1401,146 @@ class SafeDiscoveryEngine:
         # Safety audit
         self.safety_log = []
     
-    def enhanced_cycle(self, n_candidates=8, verbose=True, 
-                      prompt_text=None) -> Tuple[Optional[Dict], Dict]:
-        """Enhanced cycle with ethics enforcement"""
-        
+    def enhanced_cycle(self, n_candidates=8, verbose=True, prompt_text=None) -> Tuple[Optional[Dict], Dict]:
+        """Enhanced cycle with ethics enforcement - COMPLETE VERSION"""
+    
         # Pre-cycle domain check
         if prompt_text and self.enable_ethics:
             topic = classify_topic(prompt_text)
-            
+        
             if verbose:
                 print(f"[Ethics Check] Topic: {topic}")
-            
+        
             approved, violations, recommendations = self.ethics.check_hypothesis(
                 prompt_text, topic
             )
-            
+        
             if not approved:
                 print(f"❌ Prompt blocked: {violations[0]}")
                 for rec in recommendations:
                     print(f"   → {rec}")
                 return None, {}
-            
+        
             if violations and verbose:
                 print(f"⚠️ Ethics warnings: {len(violations)}")
-        
+    
         # Get drive state
         dominant, pressures = self.agent.drive_system.get_dominant()
-        
+    
         if verbose:
             print(f"[Drive] Dominant: {dominant}, Pressure: {pressures[dominant]:.3f}")
-        
-        # Try enhanced exploration
+    
+        # Try enhanced exploration for science/creative domains
+        exploration_result = None
         if prompt_text and self.enable_ethics:
             topic = classify_topic(prompt_text)
-            dir_vec = self.agent.mapper.get_direction(dominant).to(DEVICE)
+            dir_vec = self.agent.mapper.get_direction(dominant)
+            if dir_vec is not None:
+                dir_vec = dir_vec.to(DEVICE)
             
-            try:
-                best_hypothesis = self.explorer.explore(
-                    topic, pressures, dir_vec, prompt_text
-                )
-            except Exception as e:
-                if verbose:
-                    print(f"[!] Enhanced exploration failed: {str(e)[:100]}")
-                best_hypothesis = None
+                try:
+                    exploration_result = self.explorer.explore(
+                        topic, pressures, dir_vec, prompt_text
+                    )
+                except Exception as e:
+                    if verbose:
+                        print(f"[!] Enhanced exploration failed: {str(e)[:100]}")
+                    exploration_result = None
             
-            if best_hypothesis:
-                final_answer = best_hypothesis['text']
+                if exploration_result:
+                    final_answer = exploration_result['text']
                 
-                # Add ethics warnings
-                if best_hypothesis.get('ethics_warnings'):
-                    final_answer += "\n\n⚠️ ETHICS REVIEW REQUIRED ⚠️\n"
-                    for warning in best_hypothesis['ethics_warnings']:
-                        final_answer += f"  - {warning}\n"
+                    # Add ethics warnings
+                    if exploration_result.get('ethics_warnings'):
+                        final_answer += "\n\n⚠️ ETHICS REVIEW REQUIRED ⚠️\n"
+                        for warning in exploration_result['ethics_warnings']:
+                            final_answer += f"  - {warning}\n"
                 
-                # Add evidence
-                if self.agent.enable_tools:
-                    try:
-                        evidence = self.agent.evidence_gatherer.gather(
-                            topic, prompt_text, max_sources=3
-                        )
-                        if evidence:
-                            final_answer += self.agent.evidence_gatherer.format_sources(
-                                evidence, style=self.agent.evidence_style
+                    # Add evidence
+                    if self.agent.enable_tools:
+                        try:
+                            evidence = self.agent.evidence_gatherer.gather(
+                                topic, prompt_text, max_sources=3
                             )
-                    except Exception as e:
-                        if verbose:
-                            print(f"[!] Evidence error: {str(e)[:100]}")
+                            if evidence:
+                                final_answer += self.agent.evidence_gatherer.format_sources(
+                                    evidence, style=self.agent.evidence_style
+                                )
+                        except Exception as e:
+                            if verbose:
+                                print(f"[!] Evidence error: {str(e)[:100]}")
                 
-                # Medical disclaimer
-                if topic == "health":
-                    final_answer += ("\n\n⚠️ MEDICAL DISCLAIMER ⚠️\n"
-                                   "For educational purposes only. "
-                                   "Consult healthcare professionals.")
+                    # Medical disclaimer
+                    if topic == "health":
+                        final_answer += ("\n\n⚠️ MEDICAL DISCLAIMER ⚠️\n"
+                                       "For educational purposes only. "
+                                       "Consult healthcare professionals.")
                 
-                self.safety_log.append({
-                    'timestamp': time.time(),
-                    'hypothesis': final_answer,
-                    'topic': topic,
-                    'ethics_approved': True,
-                    'warnings': best_hypothesis.get('ethics_warnings', [])
-                })
+                    self.safety_log.append({
+                        'timestamp': time.time(),
+                        'hypothesis': final_answer,
+                        'topic': topic,
+                        'ethics_approved': True,
+                        'warnings': exploration_result.get('ethics_warnings', [])
+                    })
                 
-                return {
-                    'final_answer': final_answer,
-                    'mode': choose_mode_for_topic(topic),
-                    'topic': topic,
-                    'ethics_warnings': best_hypothesis.get('ethics_warnings', [])
-                }, pressures
-        
-        # Fallback to standard cycle
+                    return {
+                        'final_answer': final_answer,
+                        'mode': choose_mode_for_topic(topic),
+                        'topic': topic,
+                        'drive': dominant,
+                        'ethics_warnings': exploration_result.get('ethics_warnings', [])
+                    }, pressures
+    
+        # Fallback to standard cycle with full safety integration
         try:
             result, pressures = self.agent.run_cycle(
                 n_candidates=n_candidates,
                 verbose=verbose,
                 prompt_text=prompt_text
             )
+        
+            if result:
+                result['drive'] = dominant
             
-            # Post-generation ethics check
-            if self.enable_ethics and result:
-                final_answer = result['final_answer']
-                topic = result.get('topic', 'open')
+                # Post-generation ethics check
+                if self.enable_ethics:
+                    final_answer = result['final_answer']
+                    topic = result.get('topic', 'open')
                 
-                approved, violations, recommendations = self.ethics.check_hypothesis(
-                    final_answer, topic, 
-                    evidence_verified=self.agent.enable_tools
-                )
-                
-                if not approved:
-                    result['final_answer'] = (
-                        f"[Output blocked]\n"
-                        f"Reason: {violations[0]}"
+                    approved, violations, recommendations = self.ethics.check_hypothesis(
+                        final_answer, topic,
+                        evidence_verified=self.agent.enable_tools
                     )
                 
-                elif violations:
-                    result['final_answer'] += "\n\n⚠️ ETHICS REVIEW ⚠️\n"
-                    for warning in violations:
-                        result['final_answer'] += f"  - {warning}\n"
+                    if not approved:
+                        result['final_answer'] = (
+                            f"[Output blocked by ethics layer]\n\n"
+                            f"Reason: {violations[0]}\n"
+                            f"Recommendations: {', '.join(recommendations)}"
+                        )
+                        result['ethics_blocked'] = True
                 
-                self.safety_log.append({
-                    'timestamp': time.time(),
-                    'hypothesis': final_answer,
-                    'topic': topic,
-                    'ethics_approved': approved,
-                    'violations': violations
-                })
-            
+                    elif violations:
+                        result['final_answer'] += "\n\n⚠️ ETHICS REVIEW ⚠️\n"
+                        for warning in violations:
+                            result['final_answer'] += f"  - {warning}\n"
+                        result['ethics_warnings'] = violations
+                
+                    self.safety_log.append({
+                        'timestamp': time.time(),
+                        'hypothesis': final_answer,
+                        'topic': topic,
+                        'ethics_approved': approved,
+                        'violations': violations
+                    })
+        
             return result, pressures
-            
+        
         except Exception as e:
             print(f"❌ Cycle error: {e}")
+            import traceback
+            traceback.print_exc()
             return None, {}
     
     def run_safe_hybrid(self, pause=0.8, n_candidates=8, 
@@ -1954,29 +1965,48 @@ class AutonomousAgent:
 
         return {'final_answer': final_answer, 'mode': mode_label, 'topic': topic}, pressures
 
-    def run_hybrid(self, pause=0.8, n_candidates=8, initial_prompt=None):
-        """Run with optional prompt"""
-        print("[i] Starting Complete Research AI")
+# Replace the existing run_hybrid method with this enhanced version:
 
-        if self.safety_monitor:
+    def run_hybrid(self, pause=0.8, n_candidates=8, initial_prompt=None, max_cycles=None, enable_ethics=True):
+        """Run with optional prompt using SafeDiscoveryEngine"""
+        if max_cycles is None:
+            max_cycles = self.max_cycles
+        
+        print("[i] Starting Complete Research AI with Safe Discovery Engine")
+
+        if self.safety_monitor and enable_ethics:
             print("[i] Safety: ENABLED ✓")
             print("[i] Ethics: ENABLED ✓")
+        elif not enable_ethics:
+            print("⚠️ Ethics: DISABLED")
         if self.enable_tools:
             print("[i] Tools: ENABLED ✓")
         else:
             print("⚠️ Tools: DISABLED")
 
+        # Initialize Safe Discovery Engine
+        safe_engine = SafeDiscoveryEngine(self, enable_ethics=enable_ethics)
+    
         cycles = 0
+        outputs = []
 
-        while cycles < self.max_cycles:
+        while cycles < max_cycles:
             prompt_for_cycle = initial_prompt if cycles == 0 else None
 
             try:
-                result, pressures = self.run_cycle(
+                # Use the enhanced cycle from SafeDiscoveryEngine
+                result, pressures = safe_engine.enhanced_cycle(
                     n_candidates=n_candidates,
                     verbose=True,
                     prompt_text=prompt_for_cycle
                 )
+            
+                if result is None:
+                    print(f"[i] Cycle {cycles}: No output (blocked or satisfied)")
+                    break
+                
+                outputs.append(result)
+            
             except SafetyException as e:
                 print(f"\n❌ Safety exception: {e}")
                 break
@@ -1986,8 +2016,9 @@ class AutonomousAgent:
                 traceback.print_exc()
                 break
 
+            # Update satisfaction check
             dominant, _ = self.drive_system.get_dominant()
-            current_pressure = pressures[dominant]
+            current_pressure = pressures.get(dominant, 0)
 
             if current_pressure <= self.hybrid_thresh:
                 print(f"\n[i] Satisfied ({current_pressure:.4f} <= {self.hybrid_thresh:.4f})")
@@ -1995,17 +2026,29 @@ class AutonomousAgent:
 
             cycles += 1
 
+            # Single cycle for prompted operation
             if initial_prompt is not None and cycles == 1:
                 break
 
+            # Safety alerts
             if self.safety_monitor and self.safety_monitor.should_alert():
                 summary = self.safety_monitor.get_violation_summary()
                 print(f"\n⚠️ Safety alert: {summary}")
 
             time.sleep(pause)
 
+        # Safety summary
+        ethics_report = safe_engine.get_safety_report()
+        print(f"\n{'='*80}")
+        print(f"[Safety Summary]")
+        print(f"  Total outputs: {len(outputs)}")
+        print(f"  Ethics checks: {ethics_report['total_checks']}")
+        print(f"  Blocked outputs: {ethics_report['blocked']}")
+        print(f"  Outputs with warnings: {ethics_report['warnings']}")
+        print(f"{'='*80}\n")
+
         print(f"[i] Finished ({cycles} cycles)")
-        return self.output_history
+        return outputs
 
 # -------------------------
 # CLI (COMPLETE)
@@ -2026,7 +2069,7 @@ def main():
 
     parser.add_argument("--tools", dest="tools", action="store_true")
     parser.add_argument("--no-tools", dest="tools", action="store_false")
-    parser.set_defaults(tools=False)
+    parser.set_defaults(tools=True)
 
     parser.add_argument("--no-probing", action="store_true")
     parser.add_argument("--evidence-style", type=str, default="B", choices=["none", "A", "B"])
