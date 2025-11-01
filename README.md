@@ -15,10 +15,19 @@ This repository contains a proof-of-concept implementation of a novel AI archite
 - **Built-in Ethical Constraints** and safety monitoring
 - **Autonomous Research Behavior** simulation
 
-## Repository Contents
-- `/code/` - Functional proof-of-concept implementation
-- `/architecture/` - Conceptual framework documentation  
-- `/documentation/` - Implementation notes and design rationale
+## Architectural Innovation
+
+This implementation demonstrates a novel drive-based architecture for autonomous AI research, featuring:
+
+- **Motivational Drive System**: Curiosity, coherence, novelty, truthfulness
+- **Embedding Space Steering**: Mathematical projection of drives into semantic space  
+- **Knowledge Exploration**: Advanced hypothesis generation through concept pairing
+- **Integrated Safety**: Multi-layered ethical constraints and monitoring
+- **Evidence Integration**: Wikipedia-based verification system
+
+## Core Innovation
+
+The system transforms psychological drives into geometric operations in language model embedding space, creating genuine goal-directed research behavior rather than simple pattern completion.
 
 ## Collaboration Interest
 This architecture demonstrates a novel approach to AI-driven scientific discovery. Interested in partnerships to scale this concept with modern LLMs and rigorous validation.
