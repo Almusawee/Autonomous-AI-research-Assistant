@@ -168,7 +168,35 @@ D_final = α·(D_d + β·S) + (1-α)·(D_d + β·C)
 similarity = (E_tokens · D_final) / (||E_tokens|| · ||D_final||)
 logits_biased = logits_base + γ·similarity
 ```
+🔹 α (Alpha) - Science/Creative Balance
 
+Range: 0.0 to 1.0 | Default: 0.7
+
+Role: Controls the blend between scientific rigor and creative exploration.
+
+🔹 β (Beta) - Concept Influence Strength
+
+Range: 0.0 to 1.0 | Default: 0.5
+
+Role: Controls how strongly science/creative concepts influence the base drive direction.
+
+🔹 γ (Gamma) - Steering Strength
+
+Range: 0.5 to 2.0 | Default: 1.0
+
+Role: Controls how strongly the drive direction biases token generation.
+
+Summary: **The Triad of Control**
+
+The α, β, γ parameters form a control triad that governs how drives influence generation:
+
+· α (Balance): Science ↔ Creative spectrum
+· β (Influence): Concept integration strength
+· γ (Steering): Drive bias intensity
+
+Together, they enable precise calibration of the AI's research personality - from rigorous scientist to creative explorer, all while maintaining safety and coherence.
+
+Default Configuration: (α=0.7, β=0.5, γ=1.0) provides balanced scientific creativity suitable for most research applications.
 ---
 
 ## Evaluation Metrics  
