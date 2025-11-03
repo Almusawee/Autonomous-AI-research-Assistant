@@ -76,7 +76,7 @@ DRIVES = {
 }
 
 ```
-### 2. DriveSystem  
+### 2. DriveStates  
 
 ```python
 @dataclass  
