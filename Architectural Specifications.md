@@ -5,7 +5,7 @@
 
 ## Overview  
 
-The **Autonomous Research AI** introduces an architecture built around **motivational drive systems**—enabling genuine scientific curiosity and hypothesis generation. Unlike traditional LLMs that only respond, this system **acts**, guided by **3** key features**intrinsic motivation**, **ethical boundaries**, and **exploratory intelligence**.
+The **Autonomous Research AI** introduces an architecture built around **motivational drive systems**—enabling genuine scientific curiosity and hypothesis generation. Unlike traditional LLMs that only respond, this system **acts**, guided by **3** key features **intrinsic motivation**, **ethical boundaries**, and **exploratory intelligence**.
 
 ---
 
