@@ -1,4 +1,4 @@
-# 🧠 Autonomous Research AI  
+# 🧠 Autonomous Research AI Assistant 
 ### Architectural Specification  
 
 ---
