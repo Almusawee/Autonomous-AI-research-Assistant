@@ -60,9 +60,22 @@ logits_biased = logits_base + γ·(E_tokens · D_final)  # Steering
 
 ---
 
-## Core Components  
+## Core Innovation: 
 
-### 1. DriveSystem  
+### 🔹1. The Four Core Drives
+
+The drive system transforms the AI from a passive responder into an **autonomous, motivated researcher** with genuine scientific curiosity:
+
+```python
+# Drive System Architecture
+DRIVES = {
+    'curiosity': DriveState(need=0.6, satisfaction=0.0, weight=1.0, decay_rate=0.03),
+    'coherence': DriveState(need=0.35, satisfaction=0.5, weight=0.9, decay_rate=0.015), 
+    'novelty': DriveState(need=0.45, satisfaction=0.3, weight=0.95, decay_rate=0.025),
+    'truthfulness': DriveState(need=0.5, satisfaction=0.5, weight=1.2, decay_rate=0.01)
+}
+
+### 2. DriveSystem  
 
 ```python
 @dataclass  
@@ -83,7 +96,7 @@ class DriveState:
 
 ---
 
-### 2. FeatureTargetMapper  
+### 3. FeatureTargetMapper  
 
 - Maps drive states into **embedding space vectors**  
 - **Science concepts:** `["energy","particle","quantum","field","force"]`  
@@ -92,7 +105,7 @@ class DriveState:
 
 ---
 
-### 3. InternalSimulator  
+### 4. InternalSimulator  
 
 - Guides text generation using **drive vectors**  
 - **Scores** hypotheses on novelty, coherence, truthfulness  
@@ -100,7 +113,7 @@ class DriveState:
 
 ---
 
-### 4. ExploreKnowledgeSpace  
+### 5. ExploreKnowledgeSpace  
 
 ```python
 class ExploreKnowledgeSpace:
