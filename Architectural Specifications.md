@@ -190,9 +190,9 @@ Summary: **The Triad of Control**
 
 The α, β, γ parameters form a control triad that governs how drives influence generation:
 
-· α (Balance): Science ↔ Creative spectrum
-· β (Influence): Concept integration strength
-· γ (Steering): Drive bias intensity
+-· α (Balance): Science ↔ Creative spectrum
+-· β (Influence): Concept integration strength
+-· γ (Steering): Drive bias intensity
 
 Together, they enable precise calibration of the AI's research personality - from rigorous scientist to creative explorer, all while maintaining safety and coherence.
 
