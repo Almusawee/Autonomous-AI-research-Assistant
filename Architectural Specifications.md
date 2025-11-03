@@ -75,6 +75,7 @@ DRIVES = {
     'truthfulness': DriveState(need=0.5, satisfaction=0.5, weight=1.2, decay_rate=0.01)
 }
 
+```
 ### 2. DriveSystem  
 
 ```python
