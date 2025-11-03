@@ -199,6 +199,7 @@ The α, β, γ parameters form a control triad that governs how drives influence
 Together, they enable precise calibration of the AI's research personality - from rigorous scientist to creative explorer, all while maintaining safety and coherence.
 
 Default Configuration: (α=0.7, β=0.5, γ=1.0) provides balanced scientific creativity suitable for most research applications.
+
 ---
 
 ## Evaluation Metrics  
