@@ -34,7 +34,4 @@ The system transforms psychological drives into geometric operations in language
 ## Collaboration Interest
 This architecture demonstrates a novel approach to AI-driven scientific discovery. Interested in partnerships to scale this concept with modern LLMs and rigorous validation.
 
-> ⚠️ This repository is a conceptual and experimental research system.
-It does not generate medical, financial, or safety-critical advice.
-Intended for alignment and motivation modeling research.
 
