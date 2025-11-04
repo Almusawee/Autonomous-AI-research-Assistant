@@ -30,9 +30,11 @@ This implementation demonstrates a novel drive-based architecture for autonomous
 The system transforms psychological drives into geometric operations in language model embedding space, creating genuine goal-directed research behavior rather than simple pattern completion.
 
 
+
+## Collaboration Interest
+This architecture demonstrates a novel approach to AI-driven scientific discovery. Interested in partnerships to scale this concept with modern LLMs and rigorous validation.
+
 > ⚠️ This repository is a conceptual and experimental research system.
 It does not generate medical, financial, or safety-critical advice.
 Intended for alignment and motivation modeling research.
 
-## Collaboration Interest
-This architecture demonstrates a novel approach to AI-driven scientific discovery. Interested in partnerships to scale this concept with modern LLMs and rigorous validation.
