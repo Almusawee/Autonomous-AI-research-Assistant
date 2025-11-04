@@ -29,7 +29,7 @@ This implementation demonstrates a novel drive-based architecture for autonomous
 
 The system transforms psychological drives into geometric operations in language model embedding space, creating genuine goal-directed research behavior rather than simple pattern completion.
 
-> “For full mathematical and architectural details, see Architectural Specifications.md”
+> “For full mathematical and architectural details, see Architectural_Specifications.md”
 
 
 ## Collaboration Interest
