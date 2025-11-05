@@ -128,11 +128,6 @@ it is a natural extension of physics itself.
 
 
 
-*Developed by Aliyu Lawan Halliru — conceptual design and theoretical integration.*  
-*For research and philosophical inquiry only. No commercial use without explicit review.*
-
-
-
 ## Collaboration Interest
 This architecture demonstrates a novel approach to AI-driven scientific discovery. Interested in partnerships to scale this concept with modern LLMs and rigorous validation.
 
