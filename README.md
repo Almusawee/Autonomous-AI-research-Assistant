@@ -127,7 +127,7 @@ it is a natural extension of physics itself.
 Conceptual Design and Theoretical Framework — Aliyu Lawan Halliru
 AI-assisted Technical Integration — Autonomous AI Research Assistant (collaborative synthesis)*
 
-Note: This work represents a research-grade conceptual architecture, not a commercial or production system.
+>Note: This work represents a research-grade conceptual architecture, not a commercial or production system.
 It demonstrates how mathematical and philosophical principles of scientific curiosity and physical information can be encoded in computational form.
 *For research and philosophical inquiry only. No commercial use without explicit review.*
 
