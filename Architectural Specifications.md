@@ -9,7 +9,7 @@ The **Autonomous Research AI** introduces an architecture built around **motivat
 
 ---
 
-## Core Innovation  
+## Model's Basic Architecture
 
 ### 🔹 Drive-Based Motivation System  
 
