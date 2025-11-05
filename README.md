@@ -123,7 +123,7 @@ it is a natural extension of physics itself.
 
 ---
 
-*Authorship and Contribution
+**Authorship and Contribution**
 Conceptual Design and Theoretical Framework — Aliyu Lawan Halliru
 AI-assisted Technical Integration — Autonomous AI Research Assistant (collaborative synthesis)*
 
